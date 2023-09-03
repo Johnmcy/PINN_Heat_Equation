@@ -41,7 +41,7 @@ def heat_loss(model, x, t):
     # calculate autograd
     u_t = torch.autograd.grad(u.sum(), t, create_graph=True)[0]
     u_x = torch.autograd.grad(u.sum(), x, create_graph=True)[0]
-    u_xx = torch.autograd.grad(u.sum(), u_x, create_graph=True)[0]
+    u_xx = torch.autograd.grad(u_x.sum(), x, create_graph=True)[0]
 
     # pde loss
     pde_loss = ((u_t - u_xx) ** 2).mean()
@@ -80,7 +80,7 @@ for epoch in range(epoch_num):
     # calculate total loss
     loss = heat_loss(model, x_train, t_train)
     loss.backward() # calculate gradients
-    loss.step() # update weights
+    optimizer.step() # update weights
 
     # store mse loss
     train_errors.append(loss.item())
@@ -88,6 +88,16 @@ for epoch in range(epoch_num):
     # print train loss per epoch
     if epoch % 1 == 0:
         print(f'Epoch {epoch}, Loss {loss.item()}')
+
+# plot training error
+plt.figure()
+plt.plot(range(epoch_num), train_errors)
+plt.xlabel('Epoch')
+plt.ylabel('MSE')
+plt.title('Training error vs Epoches')
+plt.show()
+
+
 
 
 
