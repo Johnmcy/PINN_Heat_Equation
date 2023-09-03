@@ -8,40 +8,42 @@ import numpy as np
 class PINN_Heat_Equation(nn.Module):
     def __init__(self):
         super(PINN_Heat_Equation, self).__init__()
-        # one input, eight hidden layers, and one output layer
-        self.fc1 = nn.Linear(2, 50)
-        self.fc2 = nn.Linear(50, 50)
-        self.fc3 = nn.Linear(50, 50)
-        self.fc4 = nn.Linear(50, 50)
-        self.fc5 = nn.Linear(50, 50)
-        self.fc6 = nn.Linear(50, 50)
-        self.fc7 = nn.Linear(50, 50)
-        self.fc8 = nn.Linear(50, 50)
-        self.fc9 = nn.Linear(50, 50)
-        self.fc10 = nn.Linear(50, 1)
+        # one input, nine hidden layers, and one output layer
+        input_dim = 2
+        hidden_dim = 20
+        output_dim = 1
+        num_hidden_layers = 9
+
+        # first layer (from input to hidden)
+        fc1 = nn.Linear(input_dim, hidden_dim)
+        nn.init.xavier_uniform_(fc1.weight)
+        nn.init.zeros_(fc1.bias)
+        setattr(self, 'fc1', fc1)
+
+        # loop hidden layers
+        for i in range(2, num_hidden_layers + 2):
+            layer = nn.Linear(hidden_dim, hidden_dim)
+            nn.init.xavier_uniform_(layer.weight)
+            nn.init.zeros_(layer.bias)
+            setattr(self, f'fc{i}', layer)
+
+        # connect last layer
+        fc_last = nn.Linear(hidden_dim, output_dim)
+        nn.init.xavier_uniform_(fc_last.weight)
+        nn.init.zeros_(fc_last.bias)
+        setattr(self, f'fc{num_hidden_layers + 2}', fc_last)
 
     def forward(self, x_t):
-        # extract the spatial variable x and time variable t from the input tensor x_t
-        x, t = x_t[:, 0], x_t[:, 1]
-
-        # use cat to merge x and t into a 2D matrix
-        x_t = torch.cat([x.view(-1, 1), t.view(-1, 1)], dim=1)
-
-        # activate these layers
         x = torch.tanh(self.fc1(x_t))
-        x = torch.tanh(self.fc2(x))
-        x = torch.tanh(self.fc3(x))
-        x = torch.tanh(self.fc4(x))
-        x = torch.tanh(self.fc5(x))
-        x = torch.tanh(self.fc6(x))
-        x = torch.tanh(self.fc7(x))
-        x = torch.tanh(self.fc8(x))
-        x = torch.tanh(self.fc9(x))
 
-        # connect the final layer
-        x = self.fc10(x)
+        # apply hidden layers
+        for i in range(2, 10):
+            layer = getattr(self, f'fc{i}')
+            x = torch.tanh(layer(x))
 
-        # return output
+        # apply last layer
+        x = getattr(self, 'fc10')(x)
+
         return x
 
 # define loss function
@@ -78,11 +80,11 @@ t_train = t_train.reshape(-1, 1)
 
 # initialize and add optimizer
 model = PINN_Heat_Equation()
-optimizer = optim.Adam(model.parameters(), lr=0.01)
+optimizer = optim.Adam(model.parameters(), lr=0.0001)
 
 # initialize training error list and set the number of training epochs
 train_errors = []
-epoch_num = 500
+epoch_num = 8000
 
 # training loop
 for epoch in range(epoch_num):
@@ -98,7 +100,7 @@ for epoch in range(epoch_num):
     train_errors.append(loss.item())
 
     # print train loss per epoch
-    if epoch % 10 == 0:
+    if epoch % 200 == 0:
         print(f'Epoch {epoch}, Loss {loss.item()}')
 
 # plot training error
