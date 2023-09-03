@@ -64,6 +64,14 @@ x_train, t_train = torch.meshgrid(x_train.view(-1), t_train.view(-1))
 x_train = x_train.reshape(-1, 1)
 t_train = t_train.reshape(-1, 1)
 
+# Initialize and add optimizer
+model = PINN_Heat_Equation()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# Initialize training error list and set the number of training epochs
+train_errors = []
+n_epochs = 50
+
 
 
 
