@@ -66,11 +66,11 @@ t_train = t_train.reshape(-1, 1)
 
 # initialize and add optimizer
 model = PINN_Heat_Equation()
-optimizer = optim.Adam(model.parameters(), lr=0.001)
+optimizer = optim.Adam(model.parameters(), lr=0.01)
 
 # initialize training error list and set the number of training epochs
 train_errors = []
-epoch_num = 50
+epoch_num = 500
 
 # training loop
 for epoch in range(epoch_num):
@@ -86,7 +86,7 @@ for epoch in range(epoch_num):
     train_errors.append(loss.item())
 
     # print train loss per epoch
-    if epoch % 1 == 0:
+    if epoch % 10 == 0:
         print(f'Epoch {epoch}, Loss {loss.item()}')
 
 # plot training error
