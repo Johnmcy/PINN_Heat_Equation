@@ -53,6 +53,17 @@ def heat_loss(model, x, t):
     # calculate total loss
     return pde_loss + ic_loss
 
+# prepare the training data
+x_train = torch.linspace(-1, 1, 10).view(-1, 1)
+t_train = torch.linspace(0, 1, 10).view(-1, 1)
+x_train.requires_grad = True
+t_train.requires_grad = True
+
+# create a grid for plotting
+x_train, t_train = torch.meshgrid(x_train.view(-1), t_train.view(-1))
+x_train = x_train.reshape(-1, 1)
+t_train = t_train.reshape(-1, 1)
+
 
 
 
