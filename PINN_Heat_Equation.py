@@ -8,11 +8,17 @@ import numpy as np
 class PINN_Heat_Equation(nn.Module):
     def __init__(self):
         super(PINN_Heat_Equation, self).__init__()
-        # one input, two hidden, and one output layer
+        # one input, eight hidden layers, and one output layer
         self.fc1 = nn.Linear(2, 50)
         self.fc2 = nn.Linear(50, 50)
         self.fc3 = nn.Linear(50, 50)
-        self.fc4 = nn.Linear(50, 1)
+        self.fc4 = nn.Linear(50, 50)
+        self.fc5 = nn.Linear(50, 50)
+        self.fc6 = nn.Linear(50, 50)
+        self.fc7 = nn.Linear(50, 50)
+        self.fc8 = nn.Linear(50, 50)
+        self.fc9 = nn.Linear(50, 50)
+        self.fc10 = nn.Linear(50, 1)
 
     def forward(self, x_t):
         # extract the spatial variable x and time variable t from the input tensor x_t
@@ -25,9 +31,15 @@ class PINN_Heat_Equation(nn.Module):
         x = torch.tanh(self.fc1(x_t))
         x = torch.tanh(self.fc2(x))
         x = torch.tanh(self.fc3(x))
+        x = torch.tanh(self.fc4(x))
+        x = torch.tanh(self.fc5(x))
+        x = torch.tanh(self.fc6(x))
+        x = torch.tanh(self.fc7(x))
+        x = torch.tanh(self.fc8(x))
+        x = torch.tanh(self.fc9(x))
 
         # connect the final layer
-        x = self.fc4(x)
+        x = self.fc10(x)
 
         # return output
         return x
