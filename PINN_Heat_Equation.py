@@ -32,3 +32,29 @@ class PINN_Heat_Equation(nn.Module):
         # return output
         return x
 
+# define loss function
+def heat_loss(model, x, t):
+    # merge x and t as input, so x_t = [[x1, t1], [x2, t2]]
+    x_t = torch.cat([x.view(-1, 1), t.view(-1, 1)], dim = 1)
+    u = model(x_t)
+
+    # calculate autograd
+    u_t = torch.autograd.grad(u.sum(), t, create_graph=True)[0]
+    u_x = torch.autograd.grad(u.sum(), x, create_graph=True)[0]
+    u_xx = torch.autograd.grad(u.sum(), u_x, create_graph=True)[0]
+
+    # pde loss
+    pde_loss = ((u_t - u_xx) ** 2).mean()
+
+    # initial condition loss
+    init_condition = u - (1 + torch.sin(x))
+    ic_loss = (init_condition ** 2).mean()
+
+    # calculate total loss
+    return pde_loss + ic_loss
+
+
+
+
+
+
