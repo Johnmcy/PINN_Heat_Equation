@@ -84,7 +84,7 @@ optimizer = optim.Adam(model.parameters(), lr=0.0001)
 
 # initialize training error list and set the number of training epochs
 train_errors = []
-epoch_num = 8000
+epoch_num = 10000
 
 # training loop
 for epoch in range(epoch_num):
@@ -108,7 +108,7 @@ plt.figure()
 plt.plot(range(epoch_num), train_errors)
 plt.xlabel('Epoch')
 plt.ylabel('MSE')
-plt.title('Training error vs Epoches')
+plt.title('Training error vs Epochs')
 plt.show()
 
 
