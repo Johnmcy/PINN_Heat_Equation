@@ -160,7 +160,7 @@ class PINN:
 
         # print train loss per epoch
         print("Training starts")
-        for i in range(3000):
+        for i in range(5000):
             self.adam.step(self.heat_loss)
 
 if __name__ == '__main__':
